@@ -1,4 +1,4 @@
-// 확장 프로그램 설치 시 컨텍스트 메뉴 항목 생성
+// Create a context menu item when installing extensions
 browser.runtime.onInstalled.addListener(() => {
     browser.contextMenus.create({
       id: "decode-base64",
@@ -7,10 +7,10 @@ browser.runtime.onInstalled.addListener(() => {
     });
   });
   
-  // 컨텍스트 메뉴 항목 클릭 시 이벤트 처리
+  // Event processing when clicking the context menu item
   browser.contextMenus.onClicked.addListener((info, tab) => {
     if (info.menuItemId === "decode-base64") {
-      // 클릭된 탭의 컨텐츠 스크립트로 메시지 전송
+      // Message transfer to the content script of the clicked tab
       browser.tabs.sendMessage(tab.id, { action: "decodeBase64" });
     }
   });
