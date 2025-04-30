@@ -1,6 +1,6 @@
 # Firefox Base64 Decode Selection
 
-(You can add a short description or a logo image here)
+**English** | [한국어](README-ko.md)
 
 A Firefox browser extension that allows you to easily decode selected Base64 encoded text using the context menu (right-click).
 
