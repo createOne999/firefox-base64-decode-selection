@@ -19,7 +19,7 @@ You can install this extension in two ways:
 
 **1. From the Official Firefox Add-ons Store (Recommended)**
 
-*   To be added
+*   [https://addons.mozilla.org/ko/firefox/addon/base64-decoder-on-selection/](https://addons.mozilla.org/ko/firefox/addon/base64-decoder-on-selection/)
 
 **2. Manual Installation (For Development & Testing)**
 

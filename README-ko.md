@@ -18,7 +18,7 @@
 
 **1. Firefox 공식 Add-ons 스토어 (권장)**
 
-*   준비 중
+*   [https://addons.mozilla.org/ko/firefox/addon/base64-decoder-on-selection/](https://addons.mozilla.org/ko/firefox/addon/base64-decoder-on-selection/)
 
 **2. 수동 설치 (개발 및 테스트용)**
 
