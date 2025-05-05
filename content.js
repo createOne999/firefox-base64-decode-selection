@@ -5,11 +5,11 @@ let currentHideListener = null;
 function base64Decode(str) {
   try {
     // Remove potential whitespace or newlines which might be included in selection
-    str = str.trim();
+    str = str.replace(/\s/g, '');
 
     // Check if it looks like valid Base64 (optional but can filter junk)
-    if (!/^[a-zA-Z0-9+/=\s]+$/.test(str)) {
-        return "Error: Not a valid Base64 string format.";
+    if (!/^[A-Za-z0-9+/]*={0,2}$/.test(str)) {
+      console.warn("String might not be strict Base64, but attempting decode anyway:", str);
     }
 
     const bytes = Uint8Array.from(atob(str), c => c.charCodeAt(0));
@@ -17,7 +17,10 @@ function base64Decode(str) {
     return decoder.decode(bytes);
   } catch (e) {
     console.error("Base64 decode failed:", e);
-    return "Error: Failed to decode Base64. (Possible invalid characters or padding)";
+    if (e instanceof DOMException && e.name === 'InvalidCharacterError') {
+        return "Error: Invalid characters found in the string. Cannot decode Base64.";
+    }
+    return "Error: Failed to decode Base64. (Invalid characters or structure)";
   }
 }
 
