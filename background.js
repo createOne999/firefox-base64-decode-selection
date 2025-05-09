@@ -1,16 +1,26 @@
 // Create a context menu item when installing extensions
-browser.runtime.onInstalled.addListener(() => {
+function createContextMenu() {
+  // Remove existing menu (to prevent duplication)
+  browser.contextMenus.removeAll().then(() => {
+    // Create a new context menu
     browser.contextMenus.create({
       id: "decode-base64",
       title: "Base64 Decode",
-      contexts: ["selection"] // 텍스트가 선택되었을 때만 표시
+      contexts: ["selection"] // Only show when text is selected
     });
+    console.log("Base64 Decode context menu created.");
   });
-  
-  // Event processing when clicking the context menu item
-  browser.contextMenus.onClicked.addListener((info, tab) => {
-    if (info.menuItemId === "decode-base64") {
-      // Message transfer to the content script of the clicked tab
-      browser.tabs.sendMessage(tab.id, { action: "decodeBase64" });
-    }
-  });
+}
+
+// Create context menu when installing/updating extensions
+browser.runtime.onInstalled.addListener(createContextMenu);
+// Create a context menu when the browser starts
+browser.runtime.onStartup.addListener(createContextMenu);
+
+// Event processing when clicking the context menu item
+browser.contextMenus.onClicked.addListener((info, tab) => {
+  if (info.menuItemId === "decode-base64") {
+    // Message transfer to the content script of the clicked tab
+    browser.tabs.sendMessage(tab.id, { action: "decodeBase64" });
+  }
+});
