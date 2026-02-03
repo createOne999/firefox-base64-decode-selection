@@ -1,26 +1,89 @@
-// Create a context menu item when installing extensions
-function createContextMenu() {
-  // Remove existing menu (to prevent duplication)
-  browser.contextMenus.removeAll().then(() => {
-    // Create a new context menu
-    browser.contextMenus.create({
-      id: "decode-base64",
-      title: "Base64 Decode",
-      contexts: ["selection"] // Only show when text is selected
-    });
-    console.log("Base64 Decode context menu created.");
-  });
-}
+// Background script - Context menu management
+// Handles context menu creation and message passing to content scripts
 
-// Create context menu when installing/updating extensions
-browser.runtime.onInstalled.addListener(createContextMenu);
-// Create a context menu when the browser starts
-browser.runtime.onStartup.addListener(createContextMenu);
+const ContextMenuManager = {
+  MENU_ID: 'decode-base64',
+  MENU_TITLE: 'Base64 Decode',
 
-// Event processing when clicking the context menu item
-browser.contextMenus.onClicked.addListener((info, tab) => {
-  if (info.menuItemId === "decode-base64") {
-    // Message transfer to the content script of the clicked tab
-    browser.tabs.sendMessage(tab.id, { action: "decodeBase64" });
+  /**
+   * Creates the context menu item
+   * @returns {Promise<void>}
+   */
+  async create() {
+    try {
+      // Remove existing menu items to prevent duplication
+      await browser.contextMenus.removeAll();
+
+      // Create the new context menu item
+      await browser.contextMenus.create({
+        id: this.MENU_ID,
+        title: this.MENU_TITLE,
+        contexts: ['selection']
+      });
+
+      console.log('Base64 Decode context menu created.');
+    } catch (error) {
+      console.error('Failed to create context menu:', error);
+    }
+  },
+
+  /**
+   * Handles context menu click events
+   * @param {Object} info - Click info
+   * @param {Object} tab - Tab information
+   */
+  async handleClick(info, tab) {
+    if (info.menuItemId !== this.MENU_ID) {
+      return;
+    }
+
+    try {
+      await browser.tabs.sendMessage(tab.id, { action: 'decodeBase64' });
+    } catch (error) {
+      // Content script might not be loaded yet
+      console.error('Failed to send message to content script:', error);
+
+      // Try to inject content scripts dynamically if needed
+      await this.injectContentScripts(tab.id);
+    }
+  },
+
+  /**
+   * Attempts to inject content scripts if they're not loaded
+   * @param {number} tabId - Tab ID to inject into
+   */
+  async injectContentScripts(tabId) {
+    try {
+      await browser.tabs.executeScript(tabId, { file: 'config.js' });
+      await browser.tabs.executeScript(tabId, { file: 'decoder.js' });
+      await browser.tabs.executeScript(tabId, { file: 'dom-utils.js' });
+      await browser.tabs.executeScript(tabId, { file: 'ui-components.js' });
+      await browser.tabs.executeScript(tabId, { file: 'event-manager.js' });
+      await browser.tabs.executeScript(tabId, { file: 'content.js' });
+
+      // Retry sending the message
+      await browser.tabs.sendMessage(tabId, { action: 'decodeBase64' });
+    } catch (error) {
+      console.error('Failed to inject content scripts:', error);
+    }
+  },
+
+  /**
+   * Initializes the context menu manager
+   */
+  init() {
+    // Create menu on installation/update
+    browser.runtime.onInstalled.addListener(() => this.create());
+
+    // Create menu on browser startup
+    browser.runtime.onStartup.addListener(() => this.create());
+
+    // Handle menu clicks
+    browser.contextMenus.onClicked.addListener((info, tab) =>
+      this.handleClick(info, tab)
+    );
   }
-});
+};
+
+// Initialize the context menu manager
+ContextMenuManager.init();

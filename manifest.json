@@ -16,7 +16,14 @@
     "content_scripts": [
       {
         "matches": ["<all_urls>"],
-        "js": ["content.js"]
+        "js": [
+          "config.js",
+          "decoder.js",
+          "dom-utils.js",
+          "ui-components.js",
+          "event-manager.js",
+          "content.js"
+        ]
       }
     ]
   }
