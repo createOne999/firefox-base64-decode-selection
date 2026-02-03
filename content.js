@@ -83,11 +83,37 @@ function showDecodedText(text, rect) {
     user-select: text; /* Text selection available */
   `;
 
-  // Container for text and button
+  // Detect dark mode
+  const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  
+  // Color scheme based on dark/light mode
+  const colors = isDarkMode ? {
+    bg: '#333',
+    text: '#fff',
+    border: '#555',
+    buttonBg: '#4a4a4a',
+    buttonHover: '#5a5a5a',
+    buttonText: '#fff'
+  } : {
+    bg: '#f5f5f5',
+    text: '#333',
+    border: '#ccc',
+    buttonBg: '#e0e0e0',
+    buttonHover: '#d0d0d0',
+    buttonText: '#333'
+  };
+  
+  // Update display div colors
+  displayDiv.style.backgroundColor = colors.bg;
+  displayDiv.style.color = colors.text;
+  displayDiv.style.borderColor = colors.border;
+  
+  // Container for text and button (horizontal layout)
   const contentContainer = document.createElement('div');
   contentContainer.style.cssText = `
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    align-items: flex-start;
     gap: 10px;
   `;
   
@@ -97,23 +123,32 @@ function showDecodedText(text, rect) {
     word-wrap: break-word;
     max-height: 300px;
     overflow-y: auto;
+    flex: 1;
   `;
   contentContainer.appendChild(textDiv);
   
-  // Copy button
+  // Copy button with icon
   const copyButton = document.createElement('button');
-  copyButton.textContent = 'Copy';
+  copyButton.innerHTML = '&#x2398;'; // Unicode copy icon (⎘)
+  copyButton.title = 'Copy to clipboard';
   copyButton.style.cssText = `
-    align-self: flex-end;
-    padding: 5px 15px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
+    padding: 4px 8px;
+    background-color: ${colors.buttonBg};
+    color: ${colors.buttonText};
+    border: 1px solid ${colors.border};
     border-radius: 3px;
     cursor: pointer;
     font-family: monospace;
-    font-size: 12px;
+    font-size: 14px;
+    line-height: 1;
+    flex-shrink: 0;
   `;
+  copyButton.addEventListener('mouseenter', () => {
+    copyButton.style.backgroundColor = colors.buttonHover;
+  });
+  copyButton.addEventListener('mouseleave', () => {
+    copyButton.style.backgroundColor = colors.buttonBg;
+  });
   copyButton.addEventListener('click', (e) => {
     e.stopPropagation();
     navigator.clipboard.writeText(text).then(() => {
