@@ -24,6 +24,38 @@ function base64Decode(str) {
   }
 }
 
+// Show copy success message
+function showCopyMessage() {
+  const messageDiv = document.createElement('div');
+  messageDiv.textContent = 'Copied!';
+  messageDiv.style.cssText = `
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000;
+    padding: 10px 30px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    border-radius: 5px;
+    font-family: monospace;
+    font-size: 14px;
+    opacity: 1;
+    transition: opacity 0.3s ease-out;
+  `;
+  
+  document.body.appendChild(messageDiv);
+  
+  // Hide message and close display after 1.5 seconds
+  setTimeout(() => {
+    messageDiv.style.opacity = '0';
+    setTimeout(() => {
+      messageDiv.remove();
+      hideDecodedText();
+    }, 300);
+  }, 1500);
+}
+
 // Display Result
 function showDecodedText(text, rect) {
   // close already displayed
@@ -51,7 +83,48 @@ function showDecodedText(text, rect) {
     user-select: text; /* Text selection available */
   `;
 
-  displayDiv.textContent = text;
+  // Container for text and button
+  const contentContainer = document.createElement('div');
+  contentContainer.style.cssText = `
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  `;
+  
+  const textDiv = document.createElement('div');
+  textDiv.textContent = text;
+  textDiv.style.cssText = `
+    word-wrap: break-word;
+    max-height: 300px;
+    overflow-y: auto;
+  `;
+  contentContainer.appendChild(textDiv);
+  
+  // Copy button
+  const copyButton = document.createElement('button');
+  copyButton.textContent = 'Copy';
+  copyButton.style.cssText = `
+    align-self: flex-end;
+    padding: 5px 15px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: monospace;
+    font-size: 12px;
+  `;
+  copyButton.addEventListener('click', (e) => {
+    e.stopPropagation();
+    navigator.clipboard.writeText(text).then(() => {
+      showCopyMessage();
+    }).catch(err => {
+      console.error('Failed to copy:', err);
+    });
+  });
+  contentContainer.appendChild(copyButton);
+  
+  displayDiv.appendChild(contentContainer);
 
   // Add the temp DIV for calculate the size
   document.body.appendChild(displayDiv);
