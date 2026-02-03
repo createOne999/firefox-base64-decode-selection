@@ -3,6 +3,11 @@
   "name": "Base64 Decoder on Selection",
   "version": "1.2.0",
   "description": "Decode selected Base64 text on right-click.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{183de863-7160-4bc8-9c0e-f8d6aef090f8}"
+    }
+  },
   "permissions": [
     "activeTab",
     "contextMenus"
