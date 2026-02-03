@@ -24,10 +24,16 @@ function base64Decode(str) {
   }
 }
 
-// Show copy success message
-function showCopyMessage() {
+// Show copy success message with copied text
+function showCopyMessage(copiedText) {
   const messageDiv = document.createElement('div');
-  messageDiv.textContent = 'Copied!';
+  
+  // Truncate long text for display
+  const displayText = copiedText.length > 50 
+    ? copiedText.substring(0, 50) + '...'
+    : copiedText;
+  
+  messageDiv.innerHTML = `<strong>Copied:</strong> ${displayText}`;
   messageDiv.style.cssText = `
     position: fixed;
     top: 20px;
@@ -42,16 +48,20 @@ function showCopyMessage() {
     font-size: 14px;
     opacity: 1;
     transition: opacity 0.3s ease-out;
+    max-width: 80%;
+    word-wrap: break-word;
   `;
   
   document.body.appendChild(messageDiv);
   
-  // Hide message and close display after 1.5 seconds
+  // Close display immediately
+  hideDecodedText();
+  
+  // Fade out message after 1.5 seconds
   setTimeout(() => {
     messageDiv.style.opacity = '0';
     setTimeout(() => {
       messageDiv.remove();
-      hideDecodedText();
     }, 300);
   }, 1500);
 }
@@ -152,7 +162,7 @@ function showDecodedText(text, rect) {
   copyButton.addEventListener('click', (e) => {
     e.stopPropagation();
     navigator.clipboard.writeText(text).then(() => {
-      showCopyMessage();
+      showCopyMessage(text);
     }).catch(err => {
       console.error('Failed to copy:', err);
     });
