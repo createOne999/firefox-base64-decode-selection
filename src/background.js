@@ -49,23 +49,14 @@ const ContextMenuManager = {
   },
 
   /**
-   * Attempts to inject content scripts if they're not loaded
-   * @param {number} tabId - Tab ID to inject into
+   * Content scripts are automatically injected via manifest.json.
+   * Dynamic script injection is not supported in Firefox Manifest V3.
+   * @param {number} tabId - Tab ID (unused, kept for API compatibility)
    */
   async injectContentScripts(tabId) {
-    try {
-      await browser.tabs.executeScript(tabId, { file: 'config.js' });
-      await browser.tabs.executeScript(tabId, { file: 'decoder.js' });
-      await browser.tabs.executeScript(tabId, { file: 'dom-utils.js' });
-      await browser.tabs.executeScript(tabId, { file: 'ui-components.js' });
-      await browser.tabs.executeScript(tabId, { file: 'event-manager.js' });
-      await browser.tabs.executeScript(tabId, { file: 'content.js' });
-
-      // Retry sending the message
-      await browser.tabs.sendMessage(tabId, { action: 'decodeBase64' });
-    } catch (error) {
-      console.error('Failed to inject content scripts:', error);
-    }
+    // Content scripts are loaded automatically by manifest.json
+    // No dynamic injection needed for Firefox extensions
+    console.log('Content scripts should be loaded via manifest.json');
   },
 
   /**

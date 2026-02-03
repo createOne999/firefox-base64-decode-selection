@@ -5,7 +5,10 @@
   "description": "Decode selected Base64 text on right-click.",
   "browser_specific_settings": {
     "gecko": {
-      "id": "{183de863-7160-4bc8-9c0e-f8d6aef090f8}"
+      "id": "{183de863-7160-4bc8-9c0e-f8d6aef090f8}",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
     }
   },
   "permissions": [

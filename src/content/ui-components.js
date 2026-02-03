@@ -104,7 +104,7 @@ const UIComponents = {
    */
   createCopyButton(text, colors, onCopySuccess) {
     const button = document.createElement('button');
-    button.innerHTML = CONFIG.icons.copy;
+    button.textContent = CONFIG.icons.copy;
     button.title = CONFIG.labels.copyButtonTitle;
     button.style.cssText = `
       padding: ${CONFIG.copyButton.padding};
@@ -160,7 +160,10 @@ const UIComponents = {
     const displayText = DOMUtils.truncateText(copiedText);
     const messageDiv = document.createElement('div');
 
-    messageDiv.innerHTML = `<strong>${CONFIG.labels.copiedPrefix}</strong> ${displayText}`;
+    const strong = document.createElement('strong');
+    strong.textContent = CONFIG.labels.copiedPrefix;
+    messageDiv.appendChild(strong);
+    messageDiv.appendChild(document.createTextNode(' ' + displayText));
     messageDiv.style.cssText = `
       position: fixed;
       top: ${CONFIG.message.top};
